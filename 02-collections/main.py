@@ -22,14 +22,28 @@ def get_unique_subjects(data: list[tuple[str, str, str]]) -> set[str]:
     """
     Vrátí množinu unikátních předmětů.
     """
-    return set() # PLACEHOLDER
+    mnozina = set()
+    for n in data:
+        mnozina.add(n[2])
+    return mnozina # PLACEHOLDER
 
 def group_students_by_subject(data: list[tuple[str, str, str]]) -> dict[str, list[Student]]:
     """
     Vrátí slovník, kde klíčem je předmět a hodnotou seznam studentů (instancí třídy Student),
     kteří jsou na předmět zapsáni.
     """
-    return {} # PLACEHOLDER
+    random_dict= {}
+    students = []
+    for n in get_unique_subjects(data):
+        students=[]
+        for i in data:
+            if i[2] == n:
+                students.append(Student(i[0],i[1]))
+        random_dict[n]=students
+        print(students)
+        print(random_dict)
+
+    return(random_dict) # PLACEHOLDER
 
 def get_unique_students(data: list[tuple[str, str, str]]) -> set[Student]:
     """
@@ -37,7 +51,10 @@ def get_unique_students(data: list[tuple[str, str, str]]) -> set[Student]:
     Pozor: Data obsahují duplicity (jeden student může mít více předmětů).
     Cílem je získat množinu fyzických osob.
     """
-    return set() # PLACEHOLDER
+    idk= set()
+    for n in data:
+        idk.add(Student(n[0],n[1]))
+    return idk # PLACEHOLDER
 
 def main() -> None:
     print("--- ÚKOL 1: Unikátní předměty ---")
