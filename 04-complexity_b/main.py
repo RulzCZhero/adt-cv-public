@@ -2,33 +2,50 @@ import os
 import sys
 import timeit
 from typing import Callable
+from dataclasses import dataclass
 
 N_RUNS = 5
 
+
 def load_customers(shop_path: str) -> list[str]:
     """Načte data z konkrétní cesty a vrací seznam ID zákazníků."""
-    return []
+    customers: list[str] = []
+
+    with open(shop_path, "r", encoding="utf-8") as f:
+        _ = f.readline()
+        lines = f.readlines()
+        try:
+            for line in lines:
+                line.strip()
+                splitted =line.split(";")
+                time, ckpt, cid, price = splitted
+                rec = cid
+                customers.append(rec)
+        except Exception as e:
+            print(f"Something went wrong: {e}")
+    return customers
 
 
 def check_ckpt_list(customers: list[str]) -> list[str]:
     """Varianta A: vrátí seznam unikátních zákazníků v seznamu."""
     seen: list[str] = []
+    for n in customers:
+        if n not in seen:
+            seen.append(n)
     return seen
 
 
 def check_ckpt_set(customers: list[str]) -> set[str]:
     """Varianta B: vrátí množinu unikátních zákazníků v množin."""
     seen: set[str] = set()
+    for n in customers:
+        seen.add(n)
     return seen
 
 
-def measure(
-    func: Callable[[list[str]], object],
-    customers: list[str],
-    n_runs: int = N_RUNS,
-) -> float:
+def measure(func: Callable[[list[str]], object],customers: list[str],n_runs: int = N_RUNS,) -> float:
     """Změří čas běhu funkce func(customers) nástrojem timeit."""
-    return -1.0
+    return timeit.timeit(stmt=lambda: func(customers), number=n_runs)
 
 
 def experiment(data_path: str, city: str, shop: str, day: str = "1-Mon") -> None:

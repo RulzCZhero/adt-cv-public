@@ -1,0 +1,8 @@
+Course Report: MA1
+----------------------
+Total Students: 3
+Success Rate: 66.66666666666666%
+Average Best Score: 49.0
+
+At Risk Students:
+S23003
