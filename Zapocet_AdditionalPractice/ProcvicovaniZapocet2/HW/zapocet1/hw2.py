@@ -1,0 +1,51 @@
+from typing import List, Tuple
+
+def process_file_data(file_path: str) -> List[Tuple[str, str, str]]:
+    """
+    Reads a file, parses lines for student data, and returns them as a list of tuples.
+
+    Each line is expected to be in the format "name - surname - points".
+
+    Args:
+        file_path: The path to the file.
+
+    Returns:
+        A list of tuples, where each tuple contains (name, surname, points).
+        Returns an empty list if the file is not found or contains no valid data.
+    """
+    # Implementujte logiku pro čtení souboru a parsování dat.
+    # Soubor obsahuje data o studentech ve formátu: jméno - příjmení - body.
+    # Funkce by měla vrátit seznam n-tic (jméno, příjmení, body).
+    # Řádky, které neodpovídají formátu, ignorujte.
+    # Pokud soubor neexistuje, vraťte prázdný seznam.
+    seznam = []
+    try:
+        with open(file_path,"r",encoding="utf-8") as f:
+            for n in f:
+                idk = n.strip().split("-")
+                for i in range(len(idk)):
+                    idk[i]=idk[i].strip()
+                temptuple = tuple(idk)
+                print(temptuple)
+                if len(temptuple)==3:
+                    seznam.append(temptuple)
+        return seznam
+    except FileNotFoundError:
+        return seznam
+
+def main():
+    """
+    Main function to process 'data.txt' and print the student data.
+    """
+    filepath = "data.txt"
+    student_data = process_file_data(filepath)
+
+    if student_data:
+        print("Načtená data studentů:")
+        for name, surname, points in student_data:
+            print(f"{name} {surname}: {points} bodů")
+    else:
+        print(f"Soubor '{filepath}' nebyl nalezen nebo neobsahuje platná data.")
+
+if __name__ == "__main__":
+    main()

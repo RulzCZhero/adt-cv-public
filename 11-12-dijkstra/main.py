@@ -6,7 +6,7 @@
 
 import json
 from queue import PriorityQueue
-from tqdm import tqdm
+#from tqdm import tqdm
 import adthelpers
 
 import plotly.express as px
@@ -50,6 +50,29 @@ class Graph:
             painter = None
 
         # TODO 1 Implementujte Dijkstrův algoritmus pro nalezení nejkratší cesty
+        queue.put((0,(-1,start_id)))
+        while not queue.empty():
+            distance,(src, current)=queue.get()
+            if current in closed:
+                continue
+            closed.add(current)
+            if current not in distances:
+                distances[current] = distance
+                predecessors[current] = src
+            for neighbor in self.edges[current]:
+                dist =neighbor[0]
+                dest =neighbor[1]
+                if dest not in distances:
+                    distances[dest] = distance+dist
+                    predecessors[dest] = current
+                if distances[dest] > distance+dist:
+                    distances[dest] = distance+dist
+                    predecessors[dest] = current
+                queue.put((dist+distance,(current,dest)))
+                #print(distances)
+                #print(f"p {predecessors}")
+                #painter.draw_graph()
+
 
         return distances, predecessors
 
@@ -71,6 +94,13 @@ def load_graph_csv(filename: str) -> Graph:
     graph = Graph(directed=True)
 
     # TODO 3 Načtěte graf z CSV souboru
+    with open(filename,"r", encoding="utf-8") as file:
+        idk = file.readline()
+        print(idk)
+        for lines in file:
+            line = lines.strip().split(",")
+            src,dest,weight = line
+            graph.add_edge(int(src),int(dest),float(weight))
     return graph
 
 
@@ -79,6 +109,13 @@ def reconstruct_path(
 ) -> list[int]:
     path = []
     ## TODO 2 Implementujte funkci pro rekonstrukci cesty podle předchůdců
+    current = end_id
+    idk = []
+    while predecessors[current] != predecessors[start_id]:
+        path.append(f"{current} --> {predecessors[current]}")
+        idk.append(str(current))
+        current = predecessors[current]
+    print("->".join(idk))
     return path
 
 
@@ -98,10 +135,12 @@ def show_path(
     path: list[int],
 ) -> None:
     """
+
     Args:
         node_info (dict[int, tuple[str, str]]): metadata uzlů načtená pomocí load_nodes_metadata
         path (list[int]): cesta získaná pomocí reconstruct_path
     """
+
     if node_info:
         lats = [float(la) for la, lo in [node_info[p] for p in path]]
         lons = [float(lo) for la, lo in [node_info[p] for p in path]]
@@ -110,9 +149,8 @@ def show_path(
         fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, mapbox_center_lat=49.747)
         fig.show()
 
-
 def demo() -> None:
-    graph = load_graph("10-dijkstra/graph_grid_s3_3.json")
+    graph = load_graph("11-12-dijkstra/graph_grid_s3_3.json")
 
     # painter = adthelpers.painter.Painter(
     #     graph,
@@ -128,8 +166,8 @@ def demo() -> None:
 
 
 def pilsen() -> None:
-    edge_file = "10-dijkstra/pilsen/pilsen_edges_nice.csv"
-    node_file = "10-dijkstra/pilsen/pilsen_nodes.csv"
+    edge_file = "11-12-dijkstra/pilsen/pilsen_edges_nice.csv"
+    node_file = "11-12-dijkstra/pilsen/pilsen_nodes.csv"
     graph = load_graph_csv(edge_file)
     start = 4651
     end = 4569
@@ -144,7 +182,7 @@ def pilsen() -> None:
 
 
 def main() -> None:
-    # demo()
+    #demo()
     pilsen()
     input("...")
 

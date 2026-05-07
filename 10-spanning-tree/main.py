@@ -17,14 +17,22 @@ class Graph:
 
     def add_edge(self, src: int, dst: int, weight: float = 0) -> None:
         # TODO 1 napište kód přidání hrany do datové struktury grafu
-        pass
+        if src not in self.edges:
+            self.edges[src] = []
+        if dst not in self.edges:
+            self.edges[dst] = []
+        self.edges[src].append((weight,dst))
+        self.edges[dst].append((weight,src))
 
 
 def load_graph(filename: str) -> Graph:
     graph = Graph()
 
     # TODO 2 vytvořte graf podle dat ze souboru
-
+    with open(filename,"r") as file:
+        data = json.load(file)
+    for link in data["links"]:
+        graph.add_edge(link["source"],link["target"],link["weight"])
     return graph
 
 
@@ -42,10 +50,27 @@ def spanning_tree(graph: Graph) -> None:
     painter.draw_graph()
 
     # TODO 3 Implementujte Prim-Jarníkův algoritmus pro nalezení minimální kostry
-
+    #weight source target
+    queue.put((-1,(-1,0)))
+    while not queue.empty():
+        weight,(src, target)=queue.get()
+        #najdu všechny sousedy src
+        #přidam je do fronty
+        current = target
+        if current in closed:
+            continue
+        closed.add(current)
+        sp_tree.append((src,target))
+        for neighbor in graph.edges[current]:
+           weight = neighbor[0]
+           dest = neighbor[1]
+           queue.put((weight,(current,dest)))
+           painter.draw_graph()
+    painter.draw_graph()
 
 def main() -> None:
-    graph = load_graph("09-spanning-tree/data/graph_grid_s3_3.json")
+    graph = load_graph("10-spanning-tree/data/graph_grid_s3_3.json")
+
 
     painter = adthelpers.painter.Painter(
         graph,

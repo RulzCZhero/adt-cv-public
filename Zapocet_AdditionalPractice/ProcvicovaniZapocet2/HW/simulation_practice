@@ -1,0 +1,55 @@
+import random
+from collections import deque
+
+def run_hospital_simulation(total_minutes):
+    # --- SETUP ---
+    queue = deque()  # To hold waiting patients
+    patients_treated = 0
+    patients_left_frustrated = 0
+    doctor_busy_timer = 0 # How many mins until doctor is free
+    frustrated = deque()
+   
+    
+    # --- SIMULATION LOOP ---
+    for current_minute in range(total_minutes):
+        # TODO: 1. Handle Patient Arrivals 
+        # (15% chance to add a patient to the queue)
+        rng = random.randint(1,100)
+        if rng <=15:
+            queue.append(["pacient",0])
+        
+        # TODO: 2. Handle Patients Leaving 
+        # (Optional: Check if anyone has been in the queue too long)
+        for pacient in queue:
+            if pacient[1]>20:
+                patients_left_frustrated+=1
+                frustrated.append(pacient)
+        for pacient in frustrated:
+            queue.popleft()
+        frustrated.clear()
+        # TODO: 3. Handle the Doctor's Time
+        # (If busy, decrease timer. If free and queue exists, treat someone!)
+        if len(queue)>0 and doctor_busy_timer == 0:
+            doctor_busy_timer+=10
+            queue.popleft()
+            patients_treated+=1
+        for pacient in queue:
+            pacient[1]+=1
+        if doctor_busy_timer!=0:
+            doctor_busy_timer-=1
+    # --- RETURN RESULTS ---
+    return patients_treated, len(queue), patients_left_frustrated
+
+def main():
+    # Simulation for a 12-hour shift (12 * 60)
+    minutes = 720
+    
+    treated, waiting, left = run_hospital_simulation(minutes)
+    
+    print(f"=== ER SHIFT REPORT ({minutes} Mins) ===")
+    print(f"Patients successfully treated: {treated}")
+    print(f"Patients still in waiting room: {waiting}")
+    print(f"Patients who left due to wait times: {left}")
+
+if __name__ == "__main__":
+    main()
